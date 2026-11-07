@@ -1,0 +1,63 @@
+name = "q08-prediction-markets"
+main = "worker.js"
+compatibility_date = "2026-11-07"
+workers_dev = true
+
+[env.production]
+route = "markets.q08.org/*"
+
+# D1 Databases
+[[d1_databases]]
+binding = "SIGNALS_DB"
+database_name = "q08-market-signals"
+database_id = "55bd01c1-6acd-474a-913c-6490f18c315a"
+
+[[d1_databases]]
+binding = "TRADES_DB"
+database_name = "q08-trades"
+database_id = "5f43fb60-01cf-4d1f-842e-1b634f6ccc81"
+
+[[d1_databases]]
+binding = "AUDIT"
+database_name = "qnfo-audit"
+database_id = "35e2e573-92f3-46ac-83c6-22f6429fc5e5" # Shared from Q08
+
+# AI Binding
+[ai]
+binding = "AI"
+
+# KV for caching
+[[kv_namespaces]]
+binding = "CACHE"
+id = "4cac5afa97b54625b488df896957fc68"
+
+# Cron triggers
+[triggers]
+crons = [
+  "*/5 * * * *",   # Signal aggregation every 5 minutes
+  "*/1 * * * *",   # Arbitrage detection every minute  
+  "0 */6 * * *",   # Whale wallet refresh every 6 hours
+  "0 0 * * *"      # Daily performance report
+]
+
+# Environment variables (use secrets for production)
+[vars]
+ENVIRONMENT = "development"
+PAPER_TRADING_MODE = "true"
+MAX_POSITION_SIZE_PCT = "10"
+MAX_PORTFOLIO_EXPOSURE_PCT = "30"
+STOP_LOSS_PCT = "15"
+MIN_ARBITRAGE_SPREAD_PCT = "3"
+MIN_SIGNAL_STRENGTH = "0.6"
+
+# Secrets (set with wrangler secret put <NAME>)
+# TATUM_API_KEY
+# POLYMARKET_API_KEY
+# POLYMARKET_PRIVATE_KEY
+# POLYMARKET_WALLET_ADDRESS
+# KALSHI_API_KEY
+# KALSHI_API_SECRET
+# TWITTER_BEARER_TOKEN
+# REDDIT_CLIENT_ID
+# REDDIT_CLIENT_SECRET
+# NEWS_API_KEY
