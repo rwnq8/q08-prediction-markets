@@ -232,3 +232,16 @@ CREATE TABLE IF NOT EXISTS api_calls (
 );
 
 CREATE INDEX IF NOT EXISTS idx_api_calls_service ON api_calls(service, called_at);
+
+-- Cohort analysis results (Phase 1 - Wilson confidence implementation)
+CREATE TABLE IF NOT EXISTS cohort_analyses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  strategy_id TEXT,
+  analyzed_at TEXT NOT NULL,
+  aggregate_stats TEXT,           -- JSON: Overall metrics with Wilson confidence
+  cohorts TEXT,                   -- JSON: Breakdown by price_range, time_of_day, etc.
+  insights TEXT,                  -- JSON: Profitable cohorts, recommendations
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_cohort_strategy ON cohort_analyses(strategy_id, analyzed_at);

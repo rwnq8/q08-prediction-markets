@@ -8,6 +8,7 @@
 import { handleSignalAggregation } from './signal-aggregator/index.mjs';
 import { detectArbitrage } from './strategy-engine/arbitrage.mjs';
 import { handleWhaleTracking } from './signal-aggregator/whale-tracker.mjs';
+import { analyzeCohorts } from './packages/workers/src/analytics/cohort-analyzer.mjs';
 // import { handlePerformanceReport } from './reporting/performance.mjs'; // TODO: Implement
 
 export default {
@@ -257,6 +258,26 @@ async function handleAPI(path, request, env, corsHeaders) {
         active_strategies: strategies.count || 0,
         timestamp: new Date().toISOString()
       }, corsHeaders);
+    }
+  }
+
+  // Cohort analysis endpoint (NEW - Phase 1 implementation)
+  if (path === '/api/analytics/cohorts') {
+    if (method === 'GET') {
+      const url = new URL(request.url);
+      const strategyId = url.searchParams.get('strategy_id');
+      const minSampleSize = parseInt(url.searchParams.get('min_sample') || '10');
+      
+      try {
+        const analysis = await analyzeCohorts(env, strategyId, minSampleSize);
+        return jsonResponse(analysis, corsHeaders);
+      } catch (error) {
+        console.error('[Cohort Analysis] Error:', error);
+        return jsonResponse({ 
+          error: 'Cohort analysis failed', 
+          message: error.message 
+        }, corsHeaders, 500);
+      }
     }
   }
 
