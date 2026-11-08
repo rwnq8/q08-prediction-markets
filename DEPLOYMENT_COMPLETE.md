@@ -327,7 +327,7 @@ npm run dev
 npm run build
 
 # Deploy to Cloudflare Pages
-npx wrangler pages deploy .next --project-name q08-markets-dashboard
+npx wrangler pages deploy out --project-name q08-markets-dashboard --branch main
 ```
 
 ### Backend
